@@ -7,7 +7,10 @@ require('dotenv').config();
 // pour éliminer tout risque d'injection SQL.
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: true } : false,
+  // Supabase utilise une chaîne de certificats qui échoue avec
+  // rejectUnauthorized: true depuis certains environnements Node ;
+  // on garde le chiffrement TLS mais sans vérification stricte du certificat.
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
   max: 20,
   idleTimeoutMillis: 30000,
 });
